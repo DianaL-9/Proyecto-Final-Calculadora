@@ -1,0 +1,80 @@
+package calculadoraa;
+
+// Importar librerias
+import org.lsmp.djep.djep.DJep;
+import org.nfunk.jep.Node;
+// Esta se utiliza en caso que no se pueda derivar la funcion
+import org.nfunk.jep.ParseException;
+public class Derivadas {
+    
+    // Variable para almacenar la función
+    private String funcion = "";
+    
+    // Crear variable djep encargada de derivar
+    DJep djep;
+    Node nodoFuncion;
+    Node nodoDerivada;
+    
+    // metodo constructor
+    public Derivadas(){
+        
+    }
+    
+    public void setFuncionADerivar(String funcion){
+        // Variable parra asignar la funcion (donde guarda la función a derivar)
+        this.funcion = funcion;
+    }
+    
+    public String getFuncionDerivada(){
+        // Metodo para devolver la funcion ya derivada 
+        return this.funcion;
+    }
+    
+    // Metodo para hacer la derivada
+    public void derivar(){
+        
+        try {
+            
+            // Instanciar objeto djep de la misma clase
+            this.djep = new DJep();
+            
+            // Agregar funciones estandares 
+            this.djep.addStandardFunctions();
+            
+            // Constantes estandars
+            this.djep.addStandardConstants();
+
+            // Numeros complejos
+            this.djep.addComplex();
+
+            // Permitir variables no declaradas
+            this.djep.setAllowUndeclared(true);
+
+            // Permitir asignaciones
+            this.djep.setAllowAssignment(true);
+
+            // Reglas multiplicacion
+            this.djep.setImplicitMul(true);
+
+            // Estandares de diferenciacion
+            this.djep.addStandardDiffRules();
+            
+            // Nodo funcion
+            this.nodoFuncion = this.djep.parse(this.funcion);
+             
+            // Derivar funcion con respecto a "x"
+            Node diff = this.djep.differentiate(nodoFuncion, "x");
+
+            // Simplificar Derivada 
+            this.nodoDerivada = this.djep.simplify(diff);
+            
+            // Devolver derivada
+            this.funcion = this.djep.toString(this.nodoDerivada);
+            
+        // Manejo de errores utilizando la libreria Parse
+        } catch (ParseException e) {
+            System.out.println("Error" + e.getErrorInfo());
+        } 
+    }
+    
+}
